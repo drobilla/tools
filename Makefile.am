@@ -166,9 +166,9 @@ alsa_out_LDADD = $(top_builddir)/libjack/libjack.la
 endif #HAVE_ALSA
 endif #HAVE_SAMPLERATE
 
-#if HAVE_ZITA_BRIDGE_DEPS
+if HAVE_ZITA_ALSA_PCMI
 SUBDIRS = zalsa
-#endif
+endif
 
 DIST_SUBDIRS = zalsa
 
