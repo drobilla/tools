@@ -25,8 +25,9 @@
 #include "alsathread.h"
 
 
-Jackclient::Jackclient (jack_client_t* cl, const char*jserv, int mode, int nchan) :
+Jackclient::Jackclient (jack_client_t* cl, const char*jserv, int mode, int nchan, void *arg) :
     _client (cl),
+    _arg (arg),
     _mode (mode),
     _nchan (nchan),     
     _state (INIT),
@@ -44,8 +45,7 @@ Jackclient::~Jackclient (void)
 
 void Jackclient::init (const char *jserv)
 {
-    int                 i, spol, flags;
-    char                s [64];
+    int                 spol;
     jack_status_t       stat;
     struct sched_param  spar;
 
@@ -66,8 +66,27 @@ void Jackclient::init (const char *jserv)
     _bsize = jack_get_buffer_size (_client);
     _fsamp = jack_get_sample_rate (_client);
 
+    if (_nchan) 
+    {
+       register_ports (_nchan);
+    }
+
+    _rprio = jack_client_real_time_priority (_client);
+}
+
+void Jackclient::register_ports (int n)
+{
+    int i, flags;
+    char s [64];
+
+    if (n > sizeof (_ports) / sizeof (_ports[0])) 
+    {
+        return;
+    }
+
     flags = JackPortIsTerminal | JackPortIsPhysical;
-    for (i = 0; i < _nchan; i++)
+
+    for (i = 0; i < n; i++)
     {
 	if (_mode == PLAY)
 	{
@@ -83,10 +102,9 @@ void Jackclient::init (const char *jserv)
 	}
     }
 
-    _rprio = jack_client_real_time_priority (_client) -  sched_get_priority_max (spol);
+    _nchan = n;
     _buff = new float [_bsize * _nchan];
 }
-
 
 void Jackclient::fini (void)
 {

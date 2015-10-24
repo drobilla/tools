@@ -25,12 +25,12 @@ show_usage (void)
 	fprintf (stderr, "        -d, --delete UUID	Remove/delete all properties for \"UUID\"\n");
 	fprintf (stderr, "        -D, --delete-all	Remove/delete all properties\n");
         fprintf (stderr, "        --client		Interpret UUID as a client name, not a UUID\n");
-        fprintf (stderr, "        --port		Interpret UUID as a port name, not a UUID\n");
-	fprintf (stderr, "Display options:\n");
+        fprintf (stderr, "        --port		\tInterpret UUID as a port name, not a UUID\n");
+	fprintf (stderr, "\nDisplay options:\n");
 	fprintf (stderr, "        -l			Show all properties\n");
-	fprintf (stderr, "        -l, --list UUID	Show value all properties of UUID\n");
+	fprintf (stderr, "        -l, --list UUID	\tShow value all properties of UUID\n");
 	fprintf (stderr, "        -l, --list UUID key	Show value for key of UUID\n");
-	fprintf (stderr, "For more information see http://jackaudio.org/\n");
+	fprintf (stderr, "\nFor more information see http://jackaudio.org/\n");
 }
 
 static int
@@ -103,6 +103,11 @@ int main (int argc, char* argv[])
                 { "port", 0, 0, 'p' },
 		{ 0, 0, 0, 0 }
 	};
+
+        if (argc < 2) {
+                show_usage ();
+                exit (1);
+        }
 
 	while ((c = getopt_long (argc, argv, "sdDlaApc", long_options, &option_index)) >= 0) {
 		switch (c) {
@@ -309,9 +314,9 @@ int main (int argc, char* argv[])
                                 for (p = 0; p < description[n].property_cnt; ++p) {
                                         if (description[n].properties[p].type) {
                                                 printf ("key: %s value: %s type: %s\n", 
-                                                        description[n].properties[n].key, 
-                                                        description[n].properties[n].data,
-                                                        description[n].properties[n].type);
+                                                        description[n].properties[p].key, 
+                                                        description[n].properties[p].data,
+                                                        description[n].properties[p].type);
                                         } else {
                                                 printf ("key: %s value: %s\n", 
                                                         description[n].properties[p].key, 

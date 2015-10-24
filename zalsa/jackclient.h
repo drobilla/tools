@@ -31,7 +31,7 @@ class Jackclient
 {
 public:
 
-    Jackclient (jack_client_t*, const char *jserv, int mode, int nchan);
+    Jackclient (jack_client_t*, const char *jserv, int mode, int nchan, void *arg);
     virtual ~Jackclient (void);
     
     enum { PLAY, CAPT };
@@ -50,6 +50,8 @@ public:
     int fsamp (void) const { return _fsamp; }
     int bsize (void) const { return _bsize; }
     int rprio (void) const { return _rprio; }
+    void register_ports (int nports);
+    void *getarg(void) const { return _arg; }
 
 private:
 
@@ -78,7 +80,8 @@ private:
     int  jack_process (int nframes);
 
     jack_client_t  *_client;
-    jack_port_t    *_ports [64];
+    jack_port_t    *_ports [256];
+    void           *_arg;
     const char     *_jname;
     int             _mode;
     int             _nchan;
